@@ -12,7 +12,7 @@ export async function resolveDeps(
   repoPath: string,
   remotePath: string,
   baseFiles: string[],
-  remotePkg: TPackageJson
+  remotePkg: TPackageJson,
 ): Promise<TResolvedDeps> {
   const baseFolder = resolve(repoPath, remotePath);
   const project = new Project();
@@ -77,7 +77,7 @@ export async function resolveDeps(
       return;
     }
     throw new Error(
-      `Could not resolve module ${moduleSpecifier} in ${directory}`
+      `Could not resolve module ${moduleSpecifier} in ${directory}`,
     );
   }
 }
@@ -88,7 +88,7 @@ export async function resolveDeps(
  */
 async function resolveNodeFile(
   path: string,
-  allowDirectory = true
+  allowDirectory = true,
 ): Promise<string | null> {
   if (await exists(path, { isFile: true })) {
     return path;
@@ -111,7 +111,7 @@ async function resolveNodeFile(
 
 function findDependency(
   deps: Record<string, string>,
-  moduleSpecifier: string
+  moduleSpecifier: string,
 ): { name: string; version: string } | null {
   for (const [mode, version] of Object.entries(deps)) {
     if (mode === moduleSpecifier) {

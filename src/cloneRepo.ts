@@ -8,13 +8,14 @@ export interface TRepo {
 export async function cloneRepo(
   logger: TLogger,
   repo: string,
-  branch: string
+  branch: string,
 ): Promise<TRepo> {
   const path = await Deno.makeTempDir();
   logger.log(`Cloning ${repo} on branch ${branch}`);
 
   const lines =
-    await $`git clone --branch ${branch} --single-branch --depth 1 ${repo} ${path}`.lines();
+    await $`git clone --branch ${branch} --single-branch --depth 1 ${repo} ${path}`
+      .lines();
 
   lines.forEach((line) => logger.log(line));
   return { path };

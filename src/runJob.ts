@@ -19,7 +19,7 @@ export async function runJob(job: TConfigJob): Promise<void> {
     cloned.path,
     remotePath,
     baseFiles,
-    remotePkg
+    remotePkg,
   );
   await copyFiles(cloned.path, remotePath, localPath, allDeps.files);
   await installDeps(allDeps.dependencies);

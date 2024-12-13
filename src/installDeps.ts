@@ -1,5 +1,5 @@
 import $ from "@david/dax";
-import { parseRange, parse as parseVersion, satisfies } from "@std/semver";
+import { parse as parseVersion, parseRange, satisfies } from "@std/semver";
 import { getInstalledVersion } from "./getInstalledVersion.ts";
 import { readPackageJson } from "./readPackageJson.ts";
 
@@ -8,7 +8,7 @@ export async function installDeps(deps: Record<string, string>): Promise<void> {
   const packagesToInstall: string[] = [];
   for (const [name, requiredRange] of Object.entries(deps)) {
     const isInstalled = Boolean(
-      currentPkg.dependencies?.[name] || currentPkg.devDependencies?.[name]
+      currentPkg.dependencies?.[name] || currentPkg.devDependencies?.[name],
     );
     if (!isInstalled) {
       // Install the dependency
@@ -24,7 +24,7 @@ export async function installDeps(deps: Record<string, string>): Promise<void> {
     }
     if (!satisfies(parseVersion(currentVersion), parseRange(requiredRange))) {
       console.error(
-        `Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion}`
+        `Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion}`,
       );
       continue;
     }

@@ -7,7 +7,7 @@ export async function copyFiles(
   repoPath: string,
   remotePath: string,
   localPath: string,
-  files: string[]
+  files: string[],
 ): Promise<void> {
   const baseFolder = resolve(repoPath, remotePath);
   for (const file of files) {
