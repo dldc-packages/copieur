@@ -5,7 +5,7 @@
   "tasks": {
     "update": "deno run -A jsr:@molt/cli",
     "update:commit": "deno task -q update --commit",
-    "check": "deno check **/*.ts"
+    "check": "deno check **/*.ts && deno fmt --check && deno lint"
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.42.0",
