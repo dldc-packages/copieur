@@ -5,6 +5,7 @@
     "jsr:@david/dax@0.42": "0.42.0",
     "jsr:@david/path@0.2": "0.2.0",
     "jsr:@david/which@~0.4.1": "0.4.1",
+    "jsr:@dldc/css-console@0.2": "0.2.0",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/bytes@0.221": "0.221.0",
     "jsr:@std/fmt@1": "1.0.3",
@@ -45,6 +46,9 @@
     },
     "@david/which@0.4.1": {
       "integrity": "896a682b111f92ab866cc70c5b4afab2f5899d2f9bde31ed00203b9c250f225e"
+    },
+    "@dldc/css-console@0.2.0": {
+      "integrity": "0814d63c4e443a5019afd029e3676550428db55b335c3112cdccc5fe71fdf851"
     },
     "@std/assert@0.221.0": {
       "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a"
@@ -101,6 +105,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@david/dax@0.42",
+      "jsr:@dldc/css-console@0.2",
       "jsr:@std/fmt@^1.0.3",
       "jsr:@std/fs@^1.0.6",
       "jsr:@std/path@^1.0.8",

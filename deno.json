@@ -1,14 +1,16 @@
 {
   "name": "@dldc/copieur",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "exports": "./mod.ts",
   "tasks": {
+    "bump": "deno run -A jsr:@mys/bump@1",
     "update": "deno run -A jsr:@molt/cli",
     "update:commit": "deno task -q update --commit",
     "check": "deno check **/*.ts && deno fmt --check && deno lint"
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.42.0",
+    "@dldc/css-console": "jsr:@dldc/css-console@^0.2.0",
     "@std/fmt": "jsr:@std/fmt@^1.0.3",
     "@std/fs": "jsr:@std/fs@^1.0.6",
     "@std/path": "jsr:@std/path@^1.0.8",

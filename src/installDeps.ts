@@ -1,10 +1,17 @@
 import $ from "@david/dax";
+import * as c from "@dldc/css-console";
 import { parse as parseVersion, parseRange, satisfies } from "@std/semver";
+import type { TAllPaths } from "./getAllPaths.ts";
 import { getInstalledVersion } from "./getInstalledVersion.ts";
+import { detailsLogger, taskLogger } from "./loggers.ts";
 import { readPackageJson } from "./readPackageJson.ts";
 
-export async function installDeps(deps: Record<string, string>): Promise<void> {
-  const currentPkg = await readPackageJson(".");
+export async function installDeps(
+  allPaths: TAllPaths,
+  deps: Record<string, string>,
+): Promise<void> {
+  taskLogger.log(`Installing dependencies`);
+  const currentPkg = await readPackageJson(allPaths.local.packageJson);
   const packagesToInstall: string[] = [];
   for (const [name, requiredRange] of Object.entries(deps)) {
     const isInstalled = Boolean(
@@ -17,14 +24,14 @@ export async function installDeps(deps: Record<string, string>): Promise<void> {
     }
     const currentVersion = await getInstalledVersion(name);
     if (!currentVersion) {
-      console.warn(`Could not find installed version for ${name}`);
+      detailsLogger.log(c.orange`Could not find installed version for ${name}`);
       // Install the dependency
       packagesToInstall.push(`${name}@${requiredRange}`);
       continue;
     }
     if (!satisfies(parseVersion(currentVersion), parseRange(requiredRange))) {
-      console.error(
-        `Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion}`,
+      detailsLogger.log(
+        c.red`Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion}`,
       );
       continue;
     }
@@ -32,9 +39,13 @@ export async function installDeps(deps: Record<string, string>): Promise<void> {
   }
 
   if (packagesToInstall.length === 0) {
-    console.log("All dependencies are already installed");
+    detailsLogger.log(`All dependencies are already installed`);
     return;
   }
-  console.log(`Installing ${packagesToInstall.join(", ")}`);
-  await $`pnpm install ${packagesToInstall.join(" ")}`;
+  detailsLogger.log(`Installing ${packagesToInstall.join(", ")}`);
+  const lines = await $`pnpm install ${packagesToInstall.join(" ")}`.lines(
+    "combined",
+  );
+  lines.forEach((line) => detailsLogger.log(line));
+  detailsLogger.log(`Dependencies installed`);
 }

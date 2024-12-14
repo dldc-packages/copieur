@@ -1,6 +1,8 @@
 import { exists } from "@std/fs";
 import { dirname, resolve } from "@std/path";
 import { Project } from "@ts-morph/ts-morph";
+import type { TAllPaths } from "./getAllPaths.ts";
+import { taskLogger } from "./loggers.ts";
 import type { TPackageJson } from "./readPackageJson.ts";
 
 export interface TResolvedDeps {
@@ -9,12 +11,10 @@ export interface TResolvedDeps {
 }
 
 export async function resolveDeps(
-  repoPath: string,
-  remotePath: string,
+  allPaths: TAllPaths,
   baseFiles: string[],
   remotePkg: TPackageJson,
 ): Promise<TResolvedDeps> {
-  const baseFolder = resolve(repoPath, remotePath);
   const project = new Project();
   const dependencies: Record<string, string> = {};
   const queue = [...baseFiles];
@@ -28,13 +28,19 @@ export async function resolveDeps(
     await handleFile(file);
   }
 
+  taskLogger.log(
+    `Resolved ${files.size} files and ${
+      Object.keys(dependencies).length
+    } dependencies`,
+  );
+
   return {
     dependencies,
     files: Array.from(files),
   };
 
   async function handleFile(path: string) {
-    if (!path.startsWith(baseFolder)) {
+    if (!path.startsWith(allPaths.remote.source)) {
       throw new Error(`File ${path} is not in the base folder`);
     }
     files.add(path);

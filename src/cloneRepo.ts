@@ -1,22 +1,22 @@
 import $ from "@david/dax";
-import type { TLogger } from "./logger.ts";
+import type { TAllPaths } from "./getAllPaths.ts";
+import { detailsLogger, taskLogger } from "./loggers.ts";
 
 export interface TRepo {
   path: string;
 }
 
 export async function cloneRepo(
-  logger: TLogger,
+  paths: TAllPaths,
   repo: string,
   branch: string,
-): Promise<TRepo> {
-  const path = await Deno.makeTempDir();
-  logger.log(`Cloning ${repo} on branch ${branch}`);
-
+): Promise<void> {
+  taskLogger.log(`Cloning`);
+  detailsLogger.log(`Cloning ${repo} on branch ${branch}`);
   const lines =
-    await $`git clone --branch ${branch} --single-branch --depth 1 ${repo} ${path}`
-      .lines();
+    await $`git clone --branch ${branch} --single-branch --depth 1 ${repo} ${paths.remote.base}`
+      .lines("combined");
 
-  lines.forEach((line) => logger.log(line));
-  return { path };
+  lines.forEach((line) => detailsLogger.log(line));
+  detailsLogger.log(`Clone Done`);
 }
