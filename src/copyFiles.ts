@@ -3,7 +3,10 @@ import { dirname, relative, resolve } from "@std/path";
 import type { TAllPaths } from "./getAllPaths.ts";
 import { taskLogger } from "./loggers.ts";
 
-const HEADER = [`// SYNCED FILE`, ``].join("\n");
+/**
+ * Use block comment because they also work in CSS files
+ */
+const HEADER = [`/* SYNCED FILE */`, ``].join("\n");
 
 export async function copyFiles(
   allPaths: TAllPaths,
