@@ -1,6 +1,6 @@
 {
   "name": "@dldc/copieur",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "exports": "./mod.ts",
   "tasks": {
     "bump": "deno run -A jsr:@mys/bump@1",
