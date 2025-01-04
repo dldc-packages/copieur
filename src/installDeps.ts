@@ -43,7 +43,7 @@ export async function installDeps(
     return;
   }
   detailsLogger.log(`Installing ${packagesToInstall.join(", ")}`);
-  const lines = await $`pnpm install ${packagesToInstall.join(" ")}`.lines(
+  const lines = await $`pnpm add ${packagesToInstall.join(" ")}`.lines(
     "combined",
   );
   lines.forEach((line) => detailsLogger.log(line));
