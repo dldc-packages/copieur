@@ -12,12 +12,20 @@ import { resolveFiles } from "./resolveFiles.ts";
 export async function runJob(
   job: TConfigJob,
 ): Promise<void> {
-  const { name, repo, branch, remotePath, patterns, localPath } = job;
+  const {
+    name,
+    repo,
+    branch,
+    remotePath,
+    patterns,
+    localPath,
+    ignorePatterns = [],
+  } = job;
   jobLogger.log(`Running job ${name}`);
   const allPaths = await getAllPaths(remotePath, localPath);
   await cloneRepo(allPaths, repo, branch);
   const remotePkg = await readPackageJson(allPaths.remote.packageJson);
-  const baseFiles = await resolveFiles(allPaths, patterns);
+  const baseFiles = await resolveFiles(allPaths, patterns, ignorePatterns);
   const allDeps = await resolveDeps(allPaths, baseFiles, remotePkg);
   await copyFiles(allPaths, allDeps.files);
   await installDeps(allPaths, allDeps.dependencies);

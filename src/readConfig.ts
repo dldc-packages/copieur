@@ -9,6 +9,11 @@ const ConfigJobSchema = v.object({
   remotePath: v.string(),
   localPath: v.string(),
   patterns: v.array(v.string()),
+  /**
+   * Applied on top of "patterns"
+   * Usefull to ignore all tests files for example (`*.test.ts`)
+   */
+  ignorePatterns: v.optional(v.array(v.string())),
 });
 
 export type TConfigJob = v.InferOutput<typeof ConfigJobSchema>;
