@@ -2,7 +2,7 @@ import $ from "@david/dax";
 import * as c from "@dldc/css-console";
 import { parse as parseVersion, parseRange, satisfies } from "@std/semver";
 import type { TAllPaths } from "./getAllPaths.ts";
-import { getInstalledVersion } from "./getInstalledVersion.ts";
+import { getInstalledVersions } from "./getInstalledVersions.ts";
 import { detailsLogger, taskLogger } from "./loggers.ts";
 import { readPackageJson } from "./readPackageJson.ts";
 
@@ -13,25 +13,33 @@ export async function installDeps(
   taskLogger.log(`Installing dependencies`);
   const currentPkg = await readPackageJson(allPaths.local.packageJson);
   const packagesToInstall: string[] = [];
-  for (const [name, requiredRange] of Object.entries(deps)) {
+  const installedVersions = await getInstalledVersions();
+  for (const [name, depVersion] of Object.entries(deps)) {
+    const [specifier, requiredRange] = parseDepVersion(depVersion);
     const isInstalled = Boolean(
       currentPkg.dependencies?.[name] || currentPkg.devDependencies?.[name],
     );
+    const installCommand = `${specifier}:${name}@${requiredRange}`;
     if (!isInstalled) {
       // Install the dependency
-      packagesToInstall.push(`${name}@${requiredRange}`);
+      packagesToInstall.push(installCommand);
       continue;
     }
-    const currentVersion = await getInstalledVersion(name);
+    const currentVersion = installedVersions[name];
     if (!currentVersion) {
       detailsLogger.log(c.orange`Could not find installed version for ${name}`);
       // Install the dependency
-      packagesToInstall.push(`${name}@${requiredRange}`);
+      packagesToInstall.push(installCommand);
       continue;
     }
-    if (!satisfies(parseVersion(currentVersion), parseRange(requiredRange))) {
+    if (
+      !satisfies(
+        parseVersion(currentVersion.version),
+        parseRange(requiredRange),
+      )
+    ) {
       detailsLogger.log(
-        c.red`Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion}`,
+        c.red`Version mismatch for ${name}: required ${requiredRange}, found ${currentVersion.version}`,
       );
       continue;
     }
@@ -51,4 +59,16 @@ export async function installDeps(
   );
   lines.forEach((line) => detailsLogger.log(line));
   detailsLogger.log(`Dependencies installed`);
+}
+
+function parseDepVersion(
+  version: string,
+): [sources: "npm" | "jsr", version: string] {
+  if (version.startsWith("jsr:")) {
+    return ["jsr", version.slice(4)];
+  }
+  if (version.startsWith("npm:")) {
+    return ["npm", version.slice(4)];
+  }
+  return ["npm", version];
 }
